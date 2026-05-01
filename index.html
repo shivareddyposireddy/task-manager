@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Task Manager</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #4facfe, #00f2fe);
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 400px;
+      margin: 50px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #4facfe;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #00c6ff;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: #f1f1f1;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h2>Team Task Manager</h2>
+
+  <div class="section">
+    <h3>Signup</h3>
+    <input id="name" placeholder="Name">
+    <input id="email" placeholder="Email">
+    <input id="password" placeholder="Password">
+    <button onclick="signup()">Signup</button>
+  </div>
+
+  <div class="section">
+    <h3>Create Task</h3>
+    <input id="task" placeholder="Task title">
+    <button onclick="createTask()">Add Task</button>
+  </div>
+
+  <div class="section">
+    <h3>Tasks</h3>
+    <button onclick="getTasks()">Load Tasks</button>
+    <ul id="list"></ul>
+  </div>
+
+</div>
+
+<script>
+async function signup(){
+  await fetch("http://localhost:5000/signup", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      name: document.getElementById("name").value,
+      email: document.getElementById("email").value,
+      password: document.getElementById("password").value
+    })
+  });
+  alert("Signup successful");
+}
+
+async function createTask(){
+  await fetch("http://localhost:5000/tasks", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      title: document.getElementById("task").value
+    })
+  });
+  alert("Task added");
+}
+
+async function getTasks(){
+  const res = await fetch("http://localhost:5000/tasks");
+  const data = await res.json();
+
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+
+  data.forEach(t=>{
+    const li = document.createElement("li");
+    li.innerText = t.title + " - " + t.status;
+    list.appendChild(li);
+  });
+}
+</script>
+
+</body>
+</html>
